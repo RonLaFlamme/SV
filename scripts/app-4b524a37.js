@@ -80,32 +80,7 @@ angular.module('sv')
   .controller('MainCtrl', ["$scope", "GithubAPI", function ($scope, GithubAPI) {
 	
     //var client = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
-    var client = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
-	client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
-    client.authenticate(function(authError, dbClient){
-		if(authError || !dbClient.isAuthenticated()){
-			alert("Cannot login");
-		}
-		else{
-		dbClient.getAccountInfo(function(error, accountInfo){alert("Hi " + accountInfo.name);});
-		}
-	});
-    /*if (client.isAuthenticated()) {
-        // If we're authenticated, update the UI to reflect the logged in status.
-    } else {
-        // Otherwise show the login button.
-        $('#login').show();
-    }
-
-    client.getAccountInfo(function(error, accountInfo) {
-        if (error) {
-            console.log(error);
-            //return showError(error);  // Something went wrong.
-        }
-		else{
-        alert("Hello, " + accountInfo.name + "!");
-		}
-    });*/
+    
 
     $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': 'master', 'currentCommits':[]}
     $scope.usernameChange = function(){
@@ -130,26 +105,28 @@ angular.module('sv')
     $scope.branchChanged = function(){
         GithubAPI.getCommits($scope.user.username, $scope.user.currentRepo, $scope.user.currentBranch).then(function(data){
             $scope.user.currentCommits = [];
-            //"This is my test change for commit : 192.168.1.134\n\n: f8:16:54:7d:94:75",
-
+            
+			var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
+			dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+			dbClient.authenticate(function(authError){
+				if(authError || !dbClient.isAuthenticated()){
+					alert("Cannot login to Dropbox!");
+				}
+			});
+				
             angular.forEach(data, function(commit){
                 var commits = commit.commit.message.split(':');
-                var ip = '';
-                var mac = '';
-                if(commits[1]){
-                    ip = commits[1].replace(/(\r\n|\n|\r)/gm,"");
-                }
-                if(commits[2]){
-                    mac = commit.commit.message.split(':').slice(2).join(':');
-                }
-
-                /*client.stat('/', function(error, stat, result) {
-                        console.log(error);
-                        //alert(stat);
-                    }
-                );*/
+				var modified = "unknown";
+				if(dbClient.isAuthenticated()){
+					dbClient.stat("sv", function(error, stat){
+						modified = stat.modifiedAt;
+					});
+				}
 				
-                $scope.user.currentCommits.push({'timestamp': commit.commit.committer.date , 'mac': mac, 'ip': ip, 'commit': commit.sha});
+                $scope.user.currentCommits.push({
+					'timestamp': commit.commit.committer.date, 
+					'dbTimestamp':  modified,
+					'commit': commit.sha});
             });
         });
     }
@@ -165,5 +142,5 @@ angular.module('sv')
 	}
   }]);
 
-angular.module("sv").run(["$templateCache", function($templateCache) {$templateCache.put("app/main/main.html","<div class=\"container\"><div ng-include=\"\'app/components/navbar/navbar.html\'\"></div><div class=\"jumbotron text-center\"><h1>LaFlamme\'s Github</h1><p class=\"lead\">Commit Audit Log</p><input type=\"text\" ng-model=\"user.username\" placeholder=\"user name\"> <input type=\"button\" ng-click=\"usernameChange()\" value=\"Fetch Repos\"><select ng-change=\"repoChanged()\" ng-model=\"user.currentRepo\" ng-options=\"o as o for o in user.repos\"></select><select ng-change=\"branchChanged()\" ng-model=\"user.currentBranch\" ng-options=\"o as o for o in user.branches\"></select></div><div class=\"row\"><table class=\"table table-condensed table-striped table-condensed\"><thead><tr><th>Time Stamp</th><th>Host ID</th><th>Commit</th></tr></thead><tbody><tr ng-repeat=\"commit in user.currentCommits track by $index\"><td>{{commit.timestamp}}</td><td>empty</td><td><a ng-href=\"#\">{{commit.commit}}</a></td></tr></tbody></table></div><div><input type=\"button\" ng-click=\"saveToDropboxClick()\" value=\"Save to Dropbox\"></div></div>");
+angular.module("sv").run(["$templateCache", function($templateCache) {$templateCache.put("app/main/main.html","<div class=\"container\"><div ng-include=\"\'app/components/navbar/navbar.html\'\"></div><div class=\"jumbotron text-center\"><h1>LaFlamme\'s Github</h1><p class=\"lead\">Commit Audit Log</p><input type=\"text\" ng-model=\"user.username\" placeholder=\"user name\"> <input type=\"button\" ng-click=\"usernameChange()\" value=\"Fetch Repos\"><select ng-change=\"repoChanged()\" ng-model=\"user.currentRepo\" ng-options=\"o as o for o in user.repos\"></select><select ng-change=\"branchChanged()\" ng-model=\"user.currentBranch\" ng-options=\"o as o for o in user.branches\"></select></div><div class=\"row\"><table class=\"table table-condensed table-striped table-condensed\"><thead><tr><th>Time Stamp</th><th>Host ID</th><th>Commit</th></tr></thead><tbody><tr ng-repeat=\"commit in user.currentCommits track by $index\"><td>{{commit.timestamp}}</td><td>{{commit.dbTimestamp}}</td><td><a ng-href=\"#\">{{commit.commit}}</a></td></tr></tbody></table></div><div><input type=\"button\" ng-click=\"saveToDropboxClick()\" value=\"Save to Dropbox\"></div></div>");
 $templateCache.put("app/components/navbar/navbar.html","<nav class=\"navbar navbar-static-top navbar-inverse\" ng-controller=\"NavbarCtrl\"><div class=\"container-fluid\"><div class=\"navbar-header\"><a class=\"navbar-brand\" href=\"/\"><span class=\"glyphicon glyphicon-home\"></span> SV</a></div><div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-6\"><ul class=\"nav navbar-nav\"><li class=\"active\"><a ng-href=\"#\">Home</a></li><li><a ng-href=\"#\">About</a></li><li><a ng-href=\"#\">Contact</a></li></ul><ul class=\"nav navbar-nav navbar-right\"><li>Current date: {{ date | date:\'yyyy-MM-dd\' }}</li></ul></div></div></nav>");}]);
