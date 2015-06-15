@@ -80,7 +80,7 @@ angular.module('sv')
   .controller('MainCtrl', ["$scope", "GithubAPI", function ($scope, GithubAPI) {
 
     var client = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
-    client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ermaxw.github.io/sv/oauth_receiver.html' }));
+    client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
     client.authenticate({ interactive: true });
     if (client.isAuthenticated()) {
         // If we're authenticated, update the UI to reflect the logged in status.
@@ -136,7 +136,9 @@ angular.module('sv')
 
                 client.stat('/', function(error, stat, result) {
                         console.log(error);
-                        alert(stat);
+                        //alert(stat);
+						//test test 123
+						console.log(error);
                     }
                 );
                 $scope.user.currentCommits.push({'timestamp': commit.commit.committer.date , 'mac': mac, 'ip': ip, 'commit': commit.sha});
