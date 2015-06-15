@@ -79,8 +79,9 @@ angular.module('sv')
 angular.module('sv')
   .controller('MainCtrl', ["$scope", "GithubAPI", function ($scope, GithubAPI) {
 	
-    var client = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
-    client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+    //var client = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
+    var client = new Dropbox.Client({ key: 'i2nozuhaiuos08j'});
+	client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
     client.authenticate({ interactive: true });
     if (client.isAuthenticated()) {
         // If we're authenticated, update the UI to reflect the logged in status.
