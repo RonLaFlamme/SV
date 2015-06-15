@@ -115,7 +115,7 @@ angular.module('sv')
             angular.forEach(data, function(commit){
                 var commits = commit.commit.message.split(':');
 				if(dbClient.isAuthenticated()){
-					dbClient.stat("sv/bower.json", function(error, stat){
+					dbClient.revisions("sv/bower.json", function(error, stat){
 						var modified;
 						if(error){
 							modified = error;
