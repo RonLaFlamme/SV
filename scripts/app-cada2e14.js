@@ -11,7 +11,7 @@ angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize',
       });
 
     DropboxProvider.config('i2nozuhaiuos08j', 'https://ronlaflamme.github.io/components/ngDropbox/callback.html');
-        
+     
     $urlRouterProvider.otherwise('/');
   }])
 ;
