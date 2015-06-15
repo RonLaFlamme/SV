@@ -1,8 +1,7 @@
 'use strict';
 
-angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 
-						'ngResource', 'ui.router', 'ui.bootstrap', 'dropbox'])
-  .config(["$stateProvider", "$urlRouterProvider", "DropboxProvider", function ($stateProvider, $urlRouterProvider, DropboxProvider) {
+angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ui.router', 'ui.bootstrap'])
+  .config(["$stateProvider", "$urlRouterProvider", function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('home', {
         url: '/',
@@ -10,8 +9,8 @@ angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize',
         controller: 'MainCtrl'
       });
 
-    DropboxProvider.config('i2nozuhaiuos08j', 'https://ronlaflamme.github.io/components/ngDropbox/callback.html');
-     
+    //DropboxProvider.config('4nl4o8v9y9wqv1i', 'https://ermaxw.github.io/components/ngDropbox/callback.html');
+        
     $urlRouterProvider.otherwise('/');
   }])
 ;
@@ -78,9 +77,9 @@ angular.module('sv')
 'use strict';
 
 angular.module('sv')
-  .controller('MainCtrl', ["$scope", "GithubAPI", "Dropbox", function ($scope, GithubAPI, Dropbox) {
-	console.log(Dropbox.stat("sv"));
-    /*var client = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
+  .controller('MainCtrl', ["$scope", "GithubAPI", function ($scope, GithubAPI) {
+	
+    var client = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
     client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
     client.authenticate({ interactive: true });
     if (client.isAuthenticated()) {
@@ -98,7 +97,7 @@ angular.module('sv')
 
         alert("Hello, " + accountInfo.name + "!");
     });
-*/
+
     $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': 'master', 'currentCommits':[]}
     $scope.usernameChange = function(){
         GithubAPI.getRepos($scope.user.username).then(function(data){
