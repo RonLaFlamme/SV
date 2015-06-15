@@ -1,0 +1,33 @@
+<div class="container">
+
+  <div ng-include="'app/components/navbar/navbar.html'"></div>
+  <div class="jumbotron text-center">
+    <h1>LaFlamme's Github</h1>
+    <p class="lead">
+      Commit Audit Log
+    </p>
+    <input type="text" ng-model="user.username" placeholder="user name"/>
+      <input type="button" ng-click="usernameChange()" value="Fetch Repos"/>
+    <select ng-change="repoChanged()" ng-model="user.currentRepo" ng-options="o as o for o in user.repos"></select>
+    <select ng-change="branchChanged()" ng-model="user.currentBranch" ng-options="o as o for o in user.branches"></select>
+  </div>
+
+  <div class="row">
+    <table class="table table-condensed table-striped table-condensed">
+    <thead>
+    <tr>
+      <th>Time Stamp</th>
+      <th>Host ID</th>
+      <th>Commit</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="commit in user.currentCommits track by $index">
+      <td>{{commit.timestamp}}</td>
+      <td>empty</td>
+      <td><a ng-href="#">{{commit.commit}}</a></td>
+    </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
