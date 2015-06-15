@@ -115,7 +115,7 @@ angular.module('sv')
             angular.forEach(data, function(commit){
                 var commits = commit.commit.message.split(':');
 				if(dbClient.isAuthenticated()){
-					dbClient.revisions("sv/bower.json", function(error, revisions){
+					dbClient.history("sv/bower.json", function(error, revisions){
 						var modified;
 						if(error){
 							modified = error;
@@ -142,7 +142,12 @@ angular.module('sv')
 		});
 		
 		//store to Dropbox
-		
+		/*client.writeFile("hello_world.txt", "Hello, world!\n", function(error, stat) {
+		if (error) {
+			return showError(error);  // Something went wrong.
+		}
+		  alert("File saved as revision " + stat.versionTag);
+		});*/
 	}
   }]);
 
