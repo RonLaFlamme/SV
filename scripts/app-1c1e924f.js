@@ -121,7 +121,7 @@ angular.module('sv')
 							modified = error;
 						}
 						else{
-							modified = revisions[0].modifiedAt;
+							modified = revisions[0]["host_id"];
 						}
 						
 						$scope.user.currentCommits.push({
