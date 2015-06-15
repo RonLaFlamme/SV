@@ -10,7 +10,7 @@ angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize',
         controller: 'MainCtrl'
       });
 
-    DropboxProvider.config('i2nozuhaiuos08j', 'https://ronlaflamme.github.io/components/ngDropbox/callback.html');
+    DropboxProvider.config('i2nozuhaiuos08j', 'https://ronlaflamme.github.io/sv/components/ngDropbox/callback.html');
         
     $urlRouterProvider.otherwise('/');
   }])
