@@ -79,7 +79,7 @@ angular.module('sv')
 
 angular.module('sv')
   .controller('MainCtrl', ["$scope", "GithubAPI", "Dropbox", function ($scope, GithubAPI, Dropbox) {
-	console.log(Dropbox.stat("/"));
+	console.log(Dropbox.stat("sv"));
     /*var client = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
     client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
     client.authenticate({ interactive: true });
