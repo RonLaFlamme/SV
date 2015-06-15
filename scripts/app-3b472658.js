@@ -116,10 +116,16 @@ angular.module('sv')
 				
             angular.forEach(data, function(commit){
                 var commits = commit.commit.message.split(':');
-				var modified = "unknown";
+				var modified;
 				if(dbClient.isAuthenticated()){
 					dbClient.stat("sv", function(error, stat){
-						modified = stat.modifiedAt;
+						if(error){
+							this.modified = error;
+						}
+						else{
+							this.modified = stat.modifiedAt;
+						}
+						
 					});
 				}
 				
