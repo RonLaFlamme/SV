@@ -14,7 +14,7 @@
                     deferred.resolve({'error': 'Could not make request'});
                 });
             return deferred.promise;
-        }
+        };
 
         var getBranches = function(username, reponame)
         {
@@ -27,7 +27,7 @@
                     deferred.resolve({'error': 'Could not make request'});
                 });
             return deferred.promise;
-        }
+        };
 
         var getCommits = function(username, reponame, branchname)
         {
@@ -40,13 +40,25 @@
                     deferred.resolve({'error': 'Could not make request'});
                 });
             return deferred.promise;
-        }
+        };
+		
+		var getCommit = function(username, reponame, commitId){
+			var deferred = $q.defer();
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits/'+commitId).
+                success(function (data, status, headers, config) {
+                    deferred.resolve(data);
+                }).
+                error(function (data, status, headers, config) {
+                    deferred.resolve({'error': 'Could not make request'});
+                });
+            return deferred.promise;
+		};
         
         return {
             getRepos: getRepos,
             getBranches: getBranches,
-            getCommits: getCommits
-            
+            getCommits: getCommits,
+            getCommit: getCommit
         };
     }
 })();

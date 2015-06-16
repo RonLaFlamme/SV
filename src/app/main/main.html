@@ -24,10 +24,14 @@
     <tbody>
     <tr ng-repeat="commit in user.currentCommits track by $index">
       <td>{{commit.timestamp}}</td>
-      <td>empty</td>
-      <td><a ng-href="#">{{commit.commit}}</a></td>
+      <td>{{commit.hostId}}</td>
+      <td>{{commit.commit}}</td>
     </tr>
     </tbody>
     </table>
+  </div>
+  
+  <div>
+	<input type="button" ng-click="saveToDropboxClick()" value="Save to Dropbox"/>
   </div>
 </div>

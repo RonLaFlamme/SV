@@ -2,26 +2,7 @@
 
 angular.module('sv')
   .controller('MainCtrl', function ($scope, GithubAPI) {
-
-    var client = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
-    client.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ermaxw.github.io/sv/oauth_receiver.html' }));
-    client.authenticate({ interactive: true });
-    if (client.isAuthenticated()) {
-        // If we're authenticated, update the UI to reflect the logged in status.
-    } else {
-        // Otherwise show the login button.
-        $('#login').show();
-    }
-
-    client.getAccountInfo(function(error, accountInfo) {
-        if (error) {
-            console.log(error);
-            //return showError(error);  // Something went wrong.
-        }
-
-        alert("Hello, " + accountInfo.name + "!");
-    });
-
+	
     $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': 'master', 'currentCommits':[]}
     $scope.usernameChange = function(){
         GithubAPI.getRepos($scope.user.username).then(function(data){
@@ -45,26 +26,61 @@ angular.module('sv')
     $scope.branchChanged = function(){
         GithubAPI.getCommits($scope.user.username, $scope.user.currentRepo, $scope.user.currentBranch).then(function(data){
             $scope.user.currentCommits = [];
-            //"This is my test change for commit : 192.168.1.134\n\n: f8:16:54:7d:94:75",
-
-            angular.forEach(data, function(commit){
-                var commits = commit.commit.message.split(':');
-                var ip = '';
-                var mac = '';
-                if(commits[1]){
-                    ip = commits[1].replace(/(\r\n|\n|\r)/gm,"");
-                }
-                if(commits[2]){
-                    mac = commit.commit.message.split(':').slice(2).join(':');
-                }
-
-                client.stat('/', function(error, stat, result) {
-                        console.log(error);
-                        alert(stat);
-                    }
-                );
-                $scope.user.currentCommits.push({'timestamp': commit.commit.committer.date , 'mac': mac, 'ip': ip, 'commit': commit.sha});
-            });
-        });
+			//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
+			var dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
+			dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+			dbClient.authenticate(function(authError){
+				if(authError || !dbClient.isAuthenticated()){
+					alert("Cannot login to Dropbox!");
+				}
+			});
+			//angular.forEach(data, function(commit){
+            for(int i = 0; i < data.length; i++){
+				if(i > 3){break;}
+				var commit = data[i];
+				GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
+									 commit.sha).then(function(commitInfo){
+										 
+				if(commitInfo.hasOwnProperty("files") &&
+					commitInfo.files.length > 0){	
+					
+					var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
+					
+					if(dbClient.isAuthenticated()){
+						dbClient.history(filename, function(error, revisions){
+							var modified;
+							if(error){
+								modified = error;
+							}
+							else{
+								modified = revisions[0]["host_id"];
+							}
+							
+							$scope.user.currentCommits.push({
+								'timestamp': commit.commit.committer.date, 
+								'hostId':  modified,
+								'commit': commit.sha});
+							
+						});
+					}
+				}
+				});
+			}//);
+		});
     }
+		
+	$scope.saveToDropboxClick = function(){
+		//create byte stream
+		angular.forEach($scope.user.currentCommits, function(commit){
+			//add to byte stream
+		});
+		
+		//store to Dropbox
+		/*client.writeFile("hello_world.txt", "Hello, world!\n", function(error, stat) {
+		if (error) {
+			return showError(error);  // Something went wrong.
+		}
+		  alert("File saved as revision " + stat.versionTag);
+		});*/
+	}
   });
