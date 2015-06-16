@@ -136,17 +136,17 @@ angular.module('sv')
 					
 					if(dbClient.isAuthenticated()){
 						dbClient.history(filename, function(error, revisions){
-							var modified;
+							var hostID;
 							if(error){
-								modified = error;
+								hostID = error.responseText;
 							}
 							else{
-								modified = revisions[0]["host_id"];
+								hostID = revisions[0]["host_id"];
 							}
 							
 							$scope.user.currentCommits.push({
 								'timestamp': commit.commit.committer.date, 
-								'hostId':  modified,
+								'hostId':  hostID,
 								'commit': commit.sha});
 							
 						});
