@@ -56,7 +56,7 @@ angular.module('sv')
         var getCommits = function(username, reponame, branchname)
         {
             var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?sha='+branchname).
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author='+username+'&sha='+branchname).
                 success(function (data, status, headers, config) {
                     deferred.resolve(data);
                 }).
