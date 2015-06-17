@@ -91,7 +91,7 @@ angular.module('sv')
 angular.module('sv')
   .controller('MainCtrl', ["$scope", "$timeout", "GithubAPI", function ($scope, $timeout, GithubAPI) {
 	
-    $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': 'master', 'currentCommits':[]}
+    $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': '', 'currentCommits':[]}
     $scope.usernameChange = function(){		
         GithubAPI.getRepos($scope.user.username).then(function(data){
             $scope.user.repos = [];
@@ -107,6 +107,7 @@ angular.module('sv')
             angular.forEach(data, function(branch){
                 $scope.user.branches.push(branch.name);
             });
+			$scope.user.currentBranch = 'master';
         });
     }
 	$scope.$watch("user.currentBranch", function(newVal){
