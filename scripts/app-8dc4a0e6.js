@@ -196,6 +196,7 @@ angular.module('sv')
 		
 		if($scope.dbClient.isAuthenticated()){
 			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
+			filename = filename.replace(":", "_").replace("Z", "");
 			$scope.dbClient.writeFile("sv_log/" + filename, 
 				JSON.stringify($scope.user.currentCommits), 
 				function(error, stat) {
