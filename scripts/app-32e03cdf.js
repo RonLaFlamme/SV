@@ -166,7 +166,8 @@ angular.module('sv')
 							if(error){
 								hostID = error.responseText;
 							}
-							else if(revisions && revisions.length > 0){								
+							else if(revisions && revisions.length > 0){		
+								hostID = "Not found";							
 								for(var i = 0; i < revisions.length; i++){
 									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= commitDate &&
@@ -174,8 +175,7 @@ angular.module('sv')
 											hostID = revisions[i]["host_id"];
 											break;
 										}										
-								}
-								hostID = "Not found";
+								}								
 							}
 							else{
 								hostId = "Unable to retrieve revision history for commit";
