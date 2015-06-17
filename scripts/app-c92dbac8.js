@@ -168,7 +168,7 @@ angular.module('sv')
 							}
 							else if(revisions && revisions.length > 0){								
 								for(var i = 0; i < revisions.length; i++){
-									var revisionDate = revisions[i].modifiedAt();
+									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= commitDate &&
 										revisionDate >= previousCommitDate){
 											hostID = revisions[i]["host_id"];
