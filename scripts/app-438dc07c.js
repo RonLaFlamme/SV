@@ -93,6 +93,12 @@ angular.module('sv')
 	
     $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': '', 'currentCommits':[]}
     $scope.usernameChange = function(){		
+		$scope.user.branches = [];
+		$scope.user.repos = [];
+		$scope.user.currentRepo = '';
+		$scope.user.currentBranch = '';
+		$scope.user.currentCommits = [];
+		
         GithubAPI.getRepos($scope.user.username).then(function(data){
             $scope.user.repos = [];
             angular.forEach(data, function(repo){
