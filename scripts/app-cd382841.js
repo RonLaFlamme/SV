@@ -196,13 +196,15 @@ angular.module('sv')
 		
 		if($scope.dbClient.isAuthenticated()){
 			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
-			$scope.dbClient.writeFile("hello_world.txt", JSON.stringify($scope.user.currentCommits), function(error, stat) {
-			if (error) {
-				alert(error);
-			}
-			else{ 
-				alert("File saved");
-			}
+			$scope.dbClient.writeFile("sv_log/" + filename, 
+				JSON.stringify($scope.user.currentCommits), 
+				function(error, stat) {
+				if (error) {
+					alert(error);
+				}
+				else{ 
+					alert("File saved");
+				}
 			});
 		}
 	};
