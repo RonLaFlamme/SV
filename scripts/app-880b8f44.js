@@ -174,19 +174,31 @@ angular.module('sv')
     }
 		
 	$scope.saveToDropboxClick = function(){
-		//create byte stream
-		angular.forEach($scope.user.currentCommits, function(commit){
-			//add to byte stream
-		});
 		
 		//store to Dropbox
-		/*client.writeFile("hello_world.txt", "Hello, world!\n", function(error, stat) {
-		if (error) {
-			return showError(error);  // Something went wrong.
+		if(!$scope.dbClient){
+			$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
 		}
-		  alert("File saved as revision " + stat.versionTag);
-		});*/
-	}
+			
+		if(!$scope.dbClient.isAuthenticated()){
+			$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+			$scope.dbClient.authenticate(function(authError){
+			if(authError || !$scope.dbClient.isAuthenticated()){
+				alert("Cannot login to Dropbox!");
+			}});
+		}
+		
+		if($scope.dbClient.isAuthenticated()){
+			$scope.dbClient.writeFile("hello_world.txt", JSON.stringify($scope.user.currentCommits), function(error, stat) {
+			if (error) {
+				alert(error);
+			}
+			else{ 
+				alert("File saved");
+			}
+			});
+		}
+	};
   }]);
 
 angular.module("sv").run(["$templateCache", function($templateCache) {$templateCache.put("app/main/main.html","<div class=\"container\"><div ng-include=\"\'app/components/navbar/navbar.html\'\"></div><div class=\"jumbotron text-center\"><h1>LaFlamme\'s Github</h1><p class=\"lead\">Commit Audit Log</p><input type=\"text\" ng-model=\"user.username\" placeholder=\"user name\"> <input type=\"button\" ng-click=\"usernameChange()\" value=\"Fetch Repos\"><select ng-change=\"repoChanged()\" ng-model=\"user.currentRepo\" ng-options=\"o as o for o in user.repos\"></select><select ng-model=\"user.currentBranch\" ng-options=\"o as o for o in user.branches\"></select></div><div class=\"row\"><table class=\"table table-condensed table-striped table-condensed\"><thead><tr><th>Time Stamp</th><th>Host ID</th><th>Commit</th></tr></thead><tbody><tr ng-repeat=\"commit in user.currentCommits track by $index\"><td>{{commit.timestamp}}</td><td>{{commit.hostId}}</td><td>{{commit.commit}}</td></tr></tbody></table></div><div><input type=\"button\" ng-click=\"saveToDropboxClick()\" value=\"Save to Dropbox\"></div></div>");
