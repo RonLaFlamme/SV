@@ -114,8 +114,8 @@ angular.module('sv')
     $scope.branchChanged = function(){
         GithubAPI.getCommits($scope.user.username, $scope.user.currentRepo, $scope.user.currentBranch).then(function(data){
             $scope.user.currentCommits = [];
-			//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
-			var dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
+			var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
+			//var dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
 			dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
 			dbClient.authenticate(function(authError){
 				if(authError || !dbClient.isAuthenticated()){
