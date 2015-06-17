@@ -126,45 +126,50 @@ angular.module('sv')
         GithubAPI.getCommits($scope.user.username, $scope.user.currentRepo, $scope.user.currentBranch).then(function(data){
             $scope.user.currentCommits = [];
 			//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
-			var dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
-			dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
-			dbClient.authenticate(function(authError){
+			if(!$scope.dbClient){
+				$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
+			}
+			
+			if(!$scope.dbClient.isAuthenticated()){
+				$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+				$scope.dbClient.authenticate(function(authError){
 				if(authError || !dbClient.isAuthenticated()){
 					alert("Cannot login to Dropbox!");
-				}
-				else{
-					angular.forEach(data, function(commit, key){
-						GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
-											 commit.sha).then(function(commitInfo){
-												 
-						if(commitInfo.hasOwnProperty("files") &&
-							commitInfo.files.length > 0){	
+				}});
+			}
+			
+			if($scope.dbClient.isAuthenticated()){
+				angular.forEach(data, function(commit, key){
+					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
+										 commit.sha).then(function(commitInfo){
+											 
+					if(commitInfo.hasOwnProperty("files") &&
+						commitInfo.files.length > 0){	
+						
+						// grab first file in commit and retrieve DB host_id
+						var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
+						
+						dbClient.history(filename, function(error, revisions){
+							var hostID;
+							if(error){
+								hostID = error.responseText;
+							}
+							else{
+								hostID = revisions[0]["host_id"];
+							}
 							
-							// grab first file in commit and retrieve DB host_id
-							var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
-							
-							dbClient.history(filename, function(error, revisions){
-								var hostID;
-								if(error){
-									hostID = error.responseText;
-								}
-								else{
-									hostID = revisions[0]["host_id"];
-								}
-								
-								$timeout(function(){
-									$scope.user.currentCommits.push({
-									'timestamp': commit.commit.committer.date, 
-									'hostId':  hostID,
+							$timeout(function(){
+								$scope.user.currentCommits.push({
+								'timestamp': commit.commit.committer.date, 
+								'hostId':  hostID,
 								'commit': commit.sha});
-								});
-								
 							});
-						}
+							
 						});
+					}
 					});
-				}
-			});		
+				});
+			}	
 		});
     }
 		
