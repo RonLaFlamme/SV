@@ -9,7 +9,7 @@
     <input type="text" ng-model="user.username" placeholder="user name"/>
       <input type="button" ng-click="usernameChange()" value="Fetch Repos"/>
     <select ng-change="repoChanged()" ng-model="user.currentRepo" ng-options="o as o for o in user.repos"></select>
-    <select ng-change="branchChanged()" ng-model="user.currentBranch" ng-options="o as o for o in user.branches"></select>
+    <select  ng-model="user.currentBranch" ng-options="o as o for o in user.branches"></select>
   </div>
 
   <div class="row">
