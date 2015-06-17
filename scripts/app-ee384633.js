@@ -122,10 +122,9 @@ angular.module('sv')
 					alert("Cannot login to Dropbox!");
 				}
 			});
-			//angular.forEach(data, function(commit){
-            for(var i = 0; i < data.length; i++){
-				if(i > 3){break;}
-				var commit = data[i];
+			var i = 0;
+            angular.forEach(data, function(commit){
+				if(i > 3){return;}
 				GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
 									 commit.sha).then(function(commitInfo){
 										 
@@ -153,7 +152,8 @@ angular.module('sv')
 					}
 				}
 				});
-			}//);
+				i++;
+			});
 		});
     }
 		
