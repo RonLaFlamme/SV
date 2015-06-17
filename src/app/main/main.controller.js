@@ -58,10 +58,15 @@ angular.module('sv')
 			}
 			
 			if($scope.dbClient.isAuthenticated()){				
-				angular.forEach(data, function(commit, key){
+				for(var i = 0; i < data.length; i++){
+					var commit = data[i];
+					var commitDate = commit.commit.committer.date;
+					var previousCommitDate = i + 1 < data.length ? 
+										data[i+1].commit.committer.date : null;
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
 										 commit.sha).then(function(commitInfo){
-											 
+											
+											
 					if(commitInfo.hasOwnProperty("files") &&
 						commitInfo.files.length > 0){	
 						
@@ -73,13 +78,24 @@ angular.module('sv')
 							if(error){
 								hostID = error.responseText;
 							}
+							else if(revisions && revisions.length > 0){		
+								hostID = "Not found";							
+								for(var i = 0; i < revisions.length; i++){
+									var revisionDate = revisions[i].modifiedAt;
+									if(revisionDate <= commitDate &&
+										revisionDate >= previousCommitDate){
+											hostID = revisions[i]["host_id"];
+											break;
+										}										
+								}								
+							}
 							else{
-								hostID = revisions[0]["host_id"];
+								hostId = "Unable to retrieve revision history for commit";
 							}
 							
 							$timeout(function(){
 								$scope.user.currentCommits.push({
-								'timestamp': commit.commit.committer.date, 
+								'timestamp': commitDate, 
 								'hostId':  hostID,
 								'commit': commit.sha});
 							});
@@ -87,7 +103,7 @@ angular.module('sv')
 						});
 					}
 					});
-				});
+				}
 			}	
 		});
     }
