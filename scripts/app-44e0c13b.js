@@ -149,7 +149,7 @@ angular.module('sv')
 						// grab first file in commit and retrieve DB host_id
 						var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
 						
-						dbClient.history(filename, function(error, revisions){
+						$scope.dbClient.history(filename, function(error, revisions){
 							var hostID;
 							if(error){
 								hostID = error.responseText;
