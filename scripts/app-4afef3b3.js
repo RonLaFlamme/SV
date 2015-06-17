@@ -125,6 +125,12 @@ angular.module('sv')
     var branchChanged = function(){
         GithubAPI.getCommits($scope.user.username, $scope.user.currentRepo, $scope.user.currentBranch).then(function(data){
             $scope.user.currentCommits = [];
+			
+			// set log filename to most recent commit date
+			if(data && data.length > 0){
+				$scope.dbFilename="SV_" + data[0].commit.committer.date + ".log";
+			}
+			
 			//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
 			if(!$scope.dbClient){
 				$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
@@ -138,7 +144,7 @@ angular.module('sv')
 				}});
 			}
 			
-			if($scope.dbClient.isAuthenticated()){
+			if($scope.dbClient.isAuthenticated()){				
 				angular.forEach(data, function(commit, key){
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
 										 commit.sha).then(function(commitInfo){
@@ -189,6 +195,7 @@ angular.module('sv')
 		}
 		
 		if($scope.dbClient.isAuthenticated()){
+			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
 			$scope.dbClient.writeFile("hello_world.txt", JSON.stringify($scope.user.currentCommits), function(error, stat) {
 			if (error) {
 				alert(error);
