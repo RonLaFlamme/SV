@@ -121,41 +121,40 @@ angular.module('sv')
 				if(authError || !dbClient.isAuthenticated()){
 					alert("Cannot login to Dropbox!");
 				}
-			});
-			var i = 0;
-			if(dbClient.isAuthenticated()){
-            angular.forEach(data, function(commit){
-				if(i > 3){return;}
-				GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
-									 commit.sha).then(function(commitInfo){
-										 
-				if(commitInfo.hasOwnProperty("files") &&
-					commitInfo.files.length > 0){	
-					
-					var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
-					
-					
-						dbClient.history(filename, function(error, revisions){
-							var hostID;
-							if(error){
-								hostID = error.responseText;
-							}
-							else{
-								hostID = revisions[0]["host_id"];
-							}
+				else{
+					var i = 0;
+					angular.forEach(data, function(commit){
+						if(i > 3){return;}
+						GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
+											 commit.sha).then(function(commitInfo){
+												 
+						if(commitInfo.hasOwnProperty("files") &&
+							commitInfo.files.length > 0){	
 							
-							$scope.user.currentCommits.push({
-								'timestamp': commit.commit.committer.date, 
-								'hostId':  hostID,
-								'commit': commit.sha});
+							var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
 							
+							
+								dbClient.history(filename, function(error, revisions){
+									var hostID;
+									if(error){
+										hostID = error.responseText;
+									}
+									else{
+										hostID = revisions[0]["host_id"];
+									}
+									
+									$scope.user.currentCommits.push({
+										'timestamp': commit.commit.committer.date, 
+										'hostId':  hostID,
+										'commit': commit.sha});
+									
+								});
+							}
 						});
-					}
-				});
-				i++;
-			});
-			
-			}
+						i++;
+					});
+				}
+			});		
 		});
     }
 		
