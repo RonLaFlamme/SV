@@ -38,7 +38,7 @@
                 }).
                 error(function (data, status, headers, config) {
                     deferred.resolve({'error': 'Could not make request'});
-                });
+                });  
             return deferred.promise;
         };
 		
