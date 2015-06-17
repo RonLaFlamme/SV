@@ -92,7 +92,21 @@ angular.module('sv')
   .controller('MainCtrl', ["$scope", "$timeout", "GithubAPI", function ($scope, $timeout, GithubAPI) {
 	
     $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': '', 'currentCommits':[]}
-    $scope.usernameChange = function(){		
+    
+	//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
+	if(!$scope.dbClient){
+		$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
+	}
+	
+	if(!$scope.dbClient.isAuthenticated()){
+		$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+		$scope.dbClient.authenticate(function(authError){
+		if(authError || !$scope.dbClient.isAuthenticated()){
+			alert("Cannot login to Dropbox!");
+		}});
+	}
+	
+	$scope.usernameChange = function(){		
 		$scope.user.branches = [];
 		$scope.user.repos = [];
 		$scope.user.currentRepo = '';
@@ -129,19 +143,6 @@ angular.module('sv')
 			// set log filename to most recent commit date
 			if(data && data.length > 0){
 				$scope.dbFilename="SV_" + data[0].commit.committer.date + ".log";
-			}
-			
-			//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
-			if(!$scope.dbClient){
-				$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
-			}
-			
-			if(!$scope.dbClient.isAuthenticated()){
-				$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
-				$scope.dbClient.authenticate(function(authError){
-				if(authError || !$scope.dbClient.isAuthenticated()){
-					alert("Cannot login to Dropbox!");
-				}});
 			}
 			
 			if($scope.dbClient.isAuthenticated()){				
@@ -181,7 +182,6 @@ angular.module('sv')
 		
 	$scope.saveToDropboxClick = function(){
 		
-		//store to Dropbox
 		if(!$scope.dbClient){
 			$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
 		}
