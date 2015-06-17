@@ -133,7 +133,7 @@ angular.module('sv')
 			if(!$scope.dbClient.isAuthenticated()){
 				$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
 				$scope.dbClient.authenticate(function(authError){
-				if(authError || !dbClient.isAuthenticated()){
+				if(authError || !$scope.dbClient.isAuthenticated()){
 					alert("Cannot login to Dropbox!");
 				}});
 			}
