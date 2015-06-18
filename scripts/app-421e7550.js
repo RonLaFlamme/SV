@@ -151,16 +151,18 @@ angular.module('sv')
 					var commitDate = commit.commit.committer.date;
 					var previousCommitDate = i + 1 < data.length ? 
 										data[i+1].commit.committer.date : null;
-					$timeout(function(){
-						$scope.user.currentCommits.push({
-								'timestamp': commitDate, 
-								'hostId':  "Not found",
-								'commit':  commit.sha,
-								'previousCommitDate': previousCommitDate});
-					});
+					
+					$scope.user.currentCommits.push({
+							'timestamp': commitDate, 
+							'hostId':  "Not found",
+							'commit':  commit.sha,
+							'previousCommitDate': previousCommitDate});
+					
 				}
 				
-				angular.forEach($scope.user.currentCommits, function(currentCommit){
+				//angular.forEach($scope.user.currentCommits, function(currentCommit){
+				for(var i = 0; i < $scope.user.currentCommits.length; i++){
+					var currentCommit = $scope.user.currentCommits[i]
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
 										 currentCommit.commit).then(function(commitInfo){
 											
@@ -193,7 +195,7 @@ angular.module('sv')
 					}
 					});
 					
-				});
+				}
 			}	
 		});
     }
