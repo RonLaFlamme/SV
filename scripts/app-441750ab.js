@@ -142,7 +142,7 @@ angular.module('sv')
 			
 			// set log filename to most recent commit date
 			if(data && data.length > 0){  
-				$scope.dbFilename="SV_" + data[0].commit.committer.date + ".log";
+				$scope.dbFilename=$scope.user.currentRepo+ "_" + data[0].commit.committer.date + ".log";
 			}
 			
 			if($scope.dbClient.isAuthenticated()){				
@@ -172,7 +172,6 @@ angular.module('sv')
 						var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
 						
 						$scope.dbClient.history(filename, function(error, revisions){
-							var hostID;
 							if(error){  
 								currentCommit.hostID = error.responseText;
 							}
@@ -182,18 +181,18 @@ angular.module('sv')
 									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
-											currentCommit.hostId = revisions[i]["host_id"];
-											break;
-										}										
+										currentCommit.hostId = revisions[i]["host_id"];
+										break;
+									}										
 								}								
 							}
 							else{
-								hostId = "Not available";
+								currentCommit.hostId = "Not available";
 							}
 						});
 					}
 					});
-					
+					delete currentCommit.previousCommitDate;
 				});
 			}	
 		});
@@ -216,7 +215,7 @@ angular.module('sv')
 		if($scope.dbClient.isAuthenticated()){
 			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
 			filename = filename.replace(/:/g, "_").replace(/Z/g, "");
-			$scope.dbClient.writeFile("sv_log/" + filename, 
+			$scope.dbClient.writeFile($scope.user.currentRepo + "_log/" + filename, 
 				JSON.stringify($scope.user.currentCommits), 
 				function(error, stat) {
 				if (error) {
