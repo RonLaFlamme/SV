@@ -141,6 +141,8 @@ angular.module('sv')
 
     var branchChanged = function(){
 		$scope.user.currentCommits = [];
+		$scope.user.initialCommits = [];
+		
         GithubAPI.getCommits($scope.user.username, $scope.user.currentRepo, $scope.user.currentBranch).then(function(data){
             			
 			// set log filename to most recent commit date
