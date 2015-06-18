@@ -189,10 +189,11 @@ angular.module('sv')
 							else{
 								currentCommit.hostId = "Not available";
 							}
+							
+							delete currentCommit.previousCommitDate;
 						});
 					}
 					});
-					delete currentCommit.previousCommitDate;
 				});
 			}	
 		});
