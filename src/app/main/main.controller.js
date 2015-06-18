@@ -123,7 +123,7 @@ angular.module('sv')
 				alert("Cannot login to Dropbox!");
 			}});
 		}
-		
+		//test
 		if($scope.dbClient.isAuthenticated()){
 			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
 			filename = filename.replace(/:/g, "_").replace(/Z/g, "");
