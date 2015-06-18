@@ -16,7 +16,7 @@ angular.module('sv')
 		if(authError || !$scope.dbClient.isAuthenticated()){
 			alert("Cannot login to Dropbox!");
 		}});
-	}
+	}   
 	
 	$scope.usernameChange = function(){		
 		$scope.user.branches = [];
