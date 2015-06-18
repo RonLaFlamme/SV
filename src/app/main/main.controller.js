@@ -53,7 +53,7 @@ angular.module('sv')
             $scope.user.currentCommits = [];
 			
 			// set log filename to most recent commit date
-			if(data && data.length > 0){
+			if(data && data.length > 0){  
 				$scope.dbFilename="SV_" + data[0].commit.committer.date + ".log";
 			}
 			
