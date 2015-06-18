@@ -151,13 +151,14 @@ angular.module('sv')
 					var commitDate = commit.commit.committer.date;
 					var previousCommitDate = i + 1 < data.length ? 
 										data[i+1].commit.committer.date : null;
-					$timeout(function(){
-						$scope.user.currentCommits.push({
-								'timestamp': commitDate, 
-								'hostId':  "Not found",
-								'commit':  commit.sha,
-								'previousCommitDate': previousCommitDate});
-					});
+					$scope.currentIndex = i;
+					
+					$scope.user.currentCommits.push({
+							'timestamp': commitDate, 
+							'hostId':  "Not found",
+							'commit':  commit.sha,
+							'previousCommitDate': previousCommitDate});
+					
 				}
 				
 				angular.forEach($scope.user.currentCommits, function(currentCommit){
@@ -181,7 +182,8 @@ angular.module('sv')
 									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
-											currentCommit.hostID = revisions[i]["host_id"];
+											currentCommit.hostId = revisions[i]["host_id"];
+											//$scope.user.currentCommits.split($scope.currentIndex, 1, currentCommit
 											break;
 										}										
 								}								
