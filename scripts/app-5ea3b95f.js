@@ -165,10 +165,8 @@ angular.module('sv')
 				
 				//angular.forEach($scope.user.currentCommits, function(currentCommit){
 				for(var i = 0; i < $scope.user.currentCommits.length; i++){
-					$scope.currentIndex = i;
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
-					$scope.user.currentCommits[i].commit).then(function(commitInfo){
-											
+					$scope.user.currentCommits[i].commit).then(function(commitInfo){											
 											
 					if(commitInfo.hasOwnProperty("files") &&
 						commitInfo.files.length > 0){	
@@ -177,17 +175,17 @@ angular.module('sv')
 						var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
 						
 						$scope.dbClient.history(filename, function(error, revisions){
-							var currentCommit = $scope.user.currentCommits[$scope.currentIndex];
+							var currentCommit = $scope.user.currentCommits[i];
 							if(error){  
 								currentCommit.hostID = error.responseText;
 							}
 							else if(revisions && revisions.length > 0){		
 								currentCommit.hostId = "Not found";				
-								for(var i = 0; i < revisions.length; i++){
-									var revisionDate = revisions[i].modifiedAt;
+								for(var j = 0; j < revisions.length; j++){
+									var revisionDate = revisions[j].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
-										currentCommit.hostId = revisions[i]["host_id"];										
+										currentCommit.hostId = revisions[j]["host_id"];										
 										break;
 									}										
 								}								
@@ -196,7 +194,7 @@ angular.module('sv')
 								currentCommit.hostId = "Not available";
 							}
 							
-							$scope.user.currentCommits.splice($scope.currentIndex, 1, currentCommit);
+							$scope.user.currentCommits.splice(i, 1, currentCommit);
 							delete currentCommit.previousCommitDate;
 						});
 					}
@@ -223,7 +221,7 @@ angular.module('sv')
 				alert("Cannot login to Dropbox!");
 			}});
 		}
-		//test
+		
 		if($scope.dbClient.isAuthenticated()){
 			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
 			filename = filename.replace(/:/g, "_").replace(/Z/g, "");
