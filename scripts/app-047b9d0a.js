@@ -127,7 +127,7 @@ angular.module('sv')
             angular.forEach(data, function(branch){
                 $scope.user.branches.push(branch.name);
             });
-			//$scope.user.currentBranch = 'master';
+			$scope.user.currentBranch = 'master';
         });
     }
 	$scope.$watch("user.currentBranch", function(newVal){
