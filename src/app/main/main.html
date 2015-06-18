@@ -23,7 +23,7 @@
     </thead>
     <tbody>
     <tr ng-repeat="commit in user.currentCommits track by $index">
-      <td>{{commit.timestamp}}</td>
+      <td>{{commit.timestamp | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
       <td>{{commit.hostId}}</td>
       <td>{{commit.commit}}</td>
     </tr>

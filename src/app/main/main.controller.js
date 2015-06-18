@@ -35,11 +35,14 @@ angular.module('sv')
     
     $scope.repoChanged = function(){
         $scope.user.branches = [];
+		$scope.user.currentBranch = '';
+		$scope.user.currentCommits = [];
+		
         GithubAPI.getBranches($scope.user.username, $scope.user.currentRepo).then(function(data){
             angular.forEach(data, function(branch){
                 $scope.user.branches.push(branch.name);
             });
-			//$scope.user.currentBranch = 'master';
+			$scope.user.currentBranch = 'master';
         });
     }
 	$scope.$watch("user.currentBranch", function(newVal){
@@ -49,9 +52,11 @@ angular.module('sv')
 	});
 
     var branchChanged = function(){
+		$scope.user.currentCommits = [];
+		$scope.user.initialCommits = [];
+		
         GithubAPI.getCommits($scope.user.username, $scope.user.currentRepo, $scope.user.currentBranch).then(function(data){
-            $scope.user.currentCommits = [];
-			
+            			
 			// set log filename to most recent commit date
 			if(data && data.length > 0){  
 				$scope.dbFilename=$scope.user.currentRepo+ "_" + data[0].commit.committer.date + ".log";
@@ -64,7 +69,7 @@ angular.module('sv')
 					var previousCommitDate = i + 1 < data.length ? 
 										data[i+1].commit.committer.date : null;
 					
-					$scope.user.currentCommits.push({
+					$scope.user.initialCommits.push({
 							'timestamp': commitDate, 
 							'hostId':  "Updating...",
 							'commit':  commit.sha,
@@ -72,10 +77,9 @@ angular.module('sv')
 					
 				}
 				
-				angular.forEach($scope.user.currentCommits, function(currentCommit){
+				angular.forEach($scope.user.initialCommits, function(currentCommit){
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
-										 currentCommit.commit).then(function(commitInfo){
-											
+										currentCommit.commit).then(function(commitInfo){											
 											
 					if(commitInfo.hasOwnProperty("files") &&
 						commitInfo.files.length > 0){	
@@ -85,15 +89,15 @@ angular.module('sv')
 						
 						$scope.dbClient.history(filename, function(error, revisions){
 							if(error){  
-								currentCommit.hostID = error.responseText;
+								currentCommit.hostId = error.responseText;
 							}
 							else if(revisions && revisions.length > 0){		
 								currentCommit.hostId = "Not found";				
-								for(var i = 0; i < revisions.length; i++){
-									var revisionDate = revisions[i].modifiedAt;
+								for(var j = 0; j < revisions.length; j++){
+									var revisionDate = revisions[j].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
-										currentCommit.hostId = revisions[i]["host_id"];
+										currentCommit.hostId = revisions[j]["host_id"];										
 										break;
 									}										
 								}								
@@ -101,13 +105,22 @@ angular.module('sv')
 							else{
 								currentCommit.hostId = "Not available";
 							}
-							
-							delete currentCommit.previousCommitDate;
+							$timeout(function(){
+							$scope.user.currentCommits.push({
+								'timestamp': currentCommit.timestamp, 
+								'hostId':  currentCommit.hostId,
+								'commit':  currentCommit.commit,
+							});		});					
 						});
 					}
 					});
+					
 				});
 			}	
+			else{
+				alert("Please refresh page to login to Dropbox");
+			}
+			
 		});
     }
 		
@@ -124,7 +137,7 @@ angular.module('sv')
 				alert("Cannot login to Dropbox!");
 			}});
 		}
-		//test
+		
 		if($scope.dbClient.isAuthenticated()){
 			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
 			filename = filename.replace(/:/g, "_").replace(/Z/g, "");
