@@ -91,7 +91,7 @@ angular.module('sv')
 angular.module('sv')
   .controller('MainCtrl', ["$scope", "$timeout", "GithubAPI", function ($scope, $timeout, GithubAPI) {
 	
-    $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': 'master', 'currentCommits':[]}
+    $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': '', 'currentCommits':[]}
     
 	//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
 	if(!$scope.dbClient){
@@ -110,7 +110,7 @@ angular.module('sv')
 		$scope.user.branches = [];
 		$scope.user.repos = [];
 		$scope.user.currentRepo = '';
-		$scope.user.currentBranch = 'master';
+		$scope.user.currentBranch = '';
 		$scope.user.currentCommits = [];
 		
         GithubAPI.getRepos($scope.user.username).then(function(data){
