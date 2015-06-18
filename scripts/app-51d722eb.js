@@ -56,7 +56,7 @@ angular.module('sv')
         var getCommits = function(username, reponame, branchname)
         {
             var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author=combiths&sha='+branchname+ '&client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author='+username+'&sha='+branchname+ '&client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
                 success(function (data, status, headers, config) {
                     deferred.resolve(data);
                 }).
@@ -151,7 +151,6 @@ angular.module('sv')
 					var commitDate = commit.commit.committer.date;
 					var previousCommitDate = i + 1 < data.length ? 
 										data[i+1].commit.committer.date : null;
-					$scope.currentIndex = i;
 					
 					$scope.user.currentCommits.push({
 							'timestamp': commitDate, 
@@ -183,7 +182,6 @@ angular.module('sv')
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
 											currentCommit.hostId = revisions[i]["host_id"];
-											//$scope.user.currentCommits.split($scope.currentIndex, 1, currentCommit
 											break;
 										}										
 								}								
