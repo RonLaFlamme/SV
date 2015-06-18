@@ -63,11 +63,13 @@ angular.module('sv')
 					var commitDate = commit.commit.committer.date;
 					var previousCommitDate = i + 1 < data.length ? 
 										data[i+1].commit.committer.date : null;
-					$scope.user.currentCommits.push({
+					$timeout(function(){
+						$scope.user.currentCommits.push({
 								'timestamp': commitDate, 
 								'hostId':  "Not found",
 								'commit':  commit.sha,
 								'previousCommitDate': previousCommitDate});
+					});
 				}
 				
 				angular.forEach($scope.user.currentCommits, function(currentCommit){
@@ -99,11 +101,6 @@ angular.module('sv')
 							else{
 								hostId = "Unable to retrieve revision history for commit";
 							}
-							
-							//$timeout(function(){
-								
-							//});
-							
 						});
 					}
 					});
