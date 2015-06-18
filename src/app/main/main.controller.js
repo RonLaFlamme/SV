@@ -39,7 +39,7 @@ angular.module('sv')
             angular.forEach(data, function(branch){
                 $scope.user.branches.push(branch.name);
             });
-			$scope.user.currentBranch = 'master';
+			//$scope.user.currentBranch = 'master';
         });
     }
 	$scope.$watch("user.currentBranch", function(newVal){
@@ -54,7 +54,7 @@ angular.module('sv')
 			
 			// set log filename to most recent commit date
 			if(data && data.length > 0){  
-				$scope.dbFilename="SV_" + data[0].commit.committer.date + ".log";
+				$scope.dbFilename=$scope.user.currentRepo+ "_" + data[0].commit.committer.date + ".log";
 			}
 			
 			if($scope.dbClient.isAuthenticated()){				
@@ -66,7 +66,7 @@ angular.module('sv')
 					
 					$scope.user.currentCommits.push({
 							'timestamp': commitDate, 
-							'hostId':  "Not found",
+							'hostId':  "Updating...",
 							'commit':  commit.sha,
 							'previousCommitDate': previousCommitDate});
 					
@@ -84,27 +84,28 @@ angular.module('sv')
 						var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
 						
 						$scope.dbClient.history(filename, function(error, revisions){
-							var hostID;
 							if(error){  
 								currentCommit.hostID = error.responseText;
 							}
-							else if(revisions && revisions.length > 0){			
+							else if(revisions && revisions.length > 0){		
+								currentCommit.hostId = "Not found";				
 								for(var i = 0; i < revisions.length; i++){
 									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
-											currentCommit.hostId = revisions[i]["host_id"];
-											break;
-										}										
+										currentCommit.hostId = revisions[i]["host_id"];
+										break;
+									}										
 								}								
 							}
 							else{
-								hostId = "Unable to retrieve revision history for commit";
+								currentCommit.hostId = "Not available";
 							}
+							
+							delete currentCommit.previousCommitDate;
 						});
 					}
 					});
-					
 				});
 			}	
 		});
@@ -127,7 +128,7 @@ angular.module('sv')
 		if($scope.dbClient.isAuthenticated()){
 			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
 			filename = filename.replace(/:/g, "_").replace(/Z/g, "");
-			$scope.dbClient.writeFile("sv_log/" + filename, 
+			$scope.dbClient.writeFile($scope.user.currentRepo + "_log/" + filename, 
 				JSON.stringify($scope.user.currentCommits), 
 				function(error, stat) {
 				if (error) {
