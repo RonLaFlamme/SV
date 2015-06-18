@@ -123,6 +123,9 @@ angular.module('sv')
     
     $scope.repoChanged = function(){
         $scope.user.branches = [];
+		$scope.user.currentBranch = '';
+		$scope.user.currentCommits = [];
+		
         GithubAPI.getBranches($scope.user.username, $scope.user.currentRepo).then(function(data){
             angular.forEach(data, function(branch){
                 $scope.user.branches.push(branch.name);
@@ -137,9 +140,9 @@ angular.module('sv')
 	});
 
     var branchChanged = function(){
+		$scope.user.currentCommits = [];
         GithubAPI.getCommits($scope.user.username, $scope.user.currentRepo, $scope.user.currentBranch).then(function(data){
-            $scope.user.currentCommits = [];
-			
+            			
 			// set log filename to most recent commit date
 			if(data && data.length > 0){  
 				$scope.dbFilename=$scope.user.currentRepo+ "_" + data[0].commit.committer.date + ".log";
