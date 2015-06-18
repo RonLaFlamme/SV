@@ -177,6 +177,8 @@ angular.module('sv')
 							else if(revisions && revisions.length > 0){			
 								for(var i = 0; i < revisions.length; i++){
 									var revisionDate = revisions[i].modifiedAt;
+									//todo: adjust for timezone (git uses GMT, DB uses timezone)
+									revisionDate = revisionDate.setHours(revisionDate.getHours() + 4)
 									if(revisionDate <= currentCommit.timestamp &&
 										revisionDate >= currentCommit.previousCommitDate){
 											currentCommit.hostID = revisions[i]["host_id"];
