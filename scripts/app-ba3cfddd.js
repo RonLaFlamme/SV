@@ -193,15 +193,16 @@ angular.module('sv')
 							else{
 								currentCommit.hostId = "Not available";
 							}
-							$scope.currentCommit = currentCommit;							
+							$timeout(function(){
+							$scope.user.currentCommits.push({
+								'timestamp': currentCommit.timestamp, 
+								'hostId':  currentCommit.hostId,
+								'commit':  currentCommit.commit,
+							});		});					
 						});
 					}
 					});
-					$scope.user.currentCommits.push({
-						'timestamp': $scope.currentCommit.timestamp, 
-						'hostId':  $scope.currentCommit.hostId,
-						'commit':  $scope.currentCommit.commit,
-					});
+					
 				});
 			}	
 			else{
