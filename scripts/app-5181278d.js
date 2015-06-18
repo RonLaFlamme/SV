@@ -43,7 +43,7 @@ angular.module('sv')
         var getBranches = function(username, reponame)
         {
             var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/branches').
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/branches?client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
                 success(function (data, status, headers, config) {
                     deferred.resolve(data);
                 }).
@@ -56,7 +56,7 @@ angular.module('sv')
         var getCommits = function(username, reponame, branchname)
         {
             var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author=combiths&sha='+branchname).
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author=combiths&sha='+branchname+ '&client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
                 success(function (data, status, headers, config) {
                     deferred.resolve(data);
                 }).
@@ -68,7 +68,7 @@ angular.module('sv')
 		
 		var getCommit = function(username, reponame, commitId){
 			var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits/'+commitId).
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits/'+commitId+'?client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
                 success(function (data, status, headers, config) {
                     deferred.resolve(data);
                 }).
