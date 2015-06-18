@@ -162,7 +162,7 @@ angular.module('sv')
 				
 				//angular.forEach($scope.user.currentCommits, function(currentCommit){
 				for(var i = 0; i < $scope.user.currentCommits.length; i++){
-					var currentCommit = $scope.user.currentCommits[i]
+					var currentCommit = $scope.user.currentCommits[i];
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
 										 currentCommit.commit).then(function(commitInfo){
 											
@@ -183,7 +183,9 @@ angular.module('sv')
 									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
-											currentCommit.hostID = revisions[i]["host_id"];
+											$timeout(function(){
+											$scope.user.currentCommits[i].hostID = revisions[i]["host_id"];
+											});
 											break;
 										}										
 								}								
