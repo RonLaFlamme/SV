@@ -155,7 +155,7 @@ angular.module('sv')
 					var previousCommitDate = i + 1 < data.length ? 
 										data[i+1].commit.committer.date : null;
 					
-					$scope.user.currentCommits.push({
+					$scope.user.initialCommits.push({
 							'timestamp': commitDate, 
 							'hostId':  "Updating...",
 							'commit':  commit.sha,
@@ -163,10 +163,9 @@ angular.module('sv')
 					
 				}
 				
-				//angular.forEach($scope.user.currentCommits, function(currentCommit){
-				for(var i = 0; i < $scope.user.currentCommits.length; i++){
+				angular.forEach($scope.user.initialCommits, function(currentCommit){
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
-					$scope.user.currentCommits[i].commit).then(function(commitInfo){											
+										currentCommit.commit).then(function(commitInfo){											
 											
 					if(commitInfo.hasOwnProperty("files") &&
 						commitInfo.files.length > 0){	
@@ -175,7 +174,6 @@ angular.module('sv')
 						var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
 						
 						$scope.dbClient.history(filename, function(error, revisions){
-							var currentCommit = $scope.user.currentCommits[i];
 							if(error){  
 								currentCommit.hostID = error.responseText;
 							}
@@ -194,12 +192,15 @@ angular.module('sv')
 								currentCommit.hostId = "Not available";
 							}
 							
-							$scope.user.currentCommits.splice(i, 1, currentCommit);
-							delete currentCommit.previousCommitDate;
+							$scope.user.currentCommits.push({
+								'timestamp': currentCommit.timestamp, 
+								'hostId':  currentCommit.hostId,
+								'commit':  currentCommit.commit,
+							});
 						});
 					}
 					});
-				}//);
+				});
 			}	
 			else{
 				alert("Please refresh page to login to Dropbox");
