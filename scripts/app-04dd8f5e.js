@@ -155,7 +155,7 @@ angular.module('sv')
 								'timestamp': commitDate, 
 								'hostId':  "Not found",
 								'commit':  commit.sha,
-								'previousCommitDate': previousCommmitDate});
+								'previousCommitDate': previousCommitDate});
 				}
 				
 				angular.forEach($scope.user.currentCommits, function(currentCommit){
