@@ -154,7 +154,7 @@ angular.module('sv')
 					
 					$scope.user.currentCommits.push({
 							'timestamp': commitDate, 
-							'hostId':  "Not found",
+							'hostId':  "Updating...",
 							'commit':  commit.sha,
 							'previousCommitDate': previousCommitDate});
 					
@@ -176,7 +176,8 @@ angular.module('sv')
 							if(error){  
 								currentCommit.hostID = error.responseText;
 							}
-							else if(revisions && revisions.length > 0){			
+							else if(revisions && revisions.length > 0){		
+								currentCommit.hostId = "Not found";				
 								for(var i = 0; i < revisions.length; i++){
 									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
@@ -187,7 +188,7 @@ angular.module('sv')
 								}								
 							}
 							else{
-								hostId = "Unable to retrieve revision history for commit";
+								hostId = "Not available";
 							}
 						});
 					}
@@ -211,7 +212,7 @@ angular.module('sv')
 				alert("Cannot login to Dropbox!");
 			}});
 		}
-		
+		//test
 		if($scope.dbClient.isAuthenticated()){
 			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
 			filename = filename.replace(/:/g, "_").replace(/Z/g, "");
