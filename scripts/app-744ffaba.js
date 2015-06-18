@@ -147,12 +147,20 @@ angular.module('sv')
 			
 			if($scope.dbClient.isAuthenticated()){				
 				for(var i = 0; i < data.length; i++){
-					$scope.commit = data[i];
-					$scope.commitDate = $scope.commit.commit.committer.date;
-					$scope.previousCommitDate = i + 1 < data.length ? 
+					var commit = data[i];
+					var commitDate = commit.commit.committer.date;
+					var previousCommitDate = i + 1 < data.length ? 
 										data[i+1].commit.committer.date : null;
+					$scope.user.currentCommits.push({
+								'timestamp': commitDate, 
+								'hostId':  "Not found",
+								'commit':  commit.sha,
+								'previousCommitDate': previousCommmitDate});
+				}
+				
+				angular.forEach($scope.user.currentCommits, function(currentCommit){
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
-										 $scope.commit.sha).then(function(commitInfo){
+										 currentCommit.commit).then(function(commitInfo){
 											
 											
 					if(commitInfo.hasOwnProperty("files") &&
@@ -164,15 +172,14 @@ angular.module('sv')
 						$scope.dbClient.history(filename, function(error, revisions){
 							var hostID;
 							if(error){
-								hostID = error.responseText;
+								currentCommit.hostID = error.responseText;
 							}
-							else if(revisions && revisions.length > 0){		
-								hostID = "Not found";							
+							else if(revisions && revisions.length > 0){			
 								for(var i = 0; i < revisions.length; i++){
 									var revisionDate = revisions[i].modifiedAt;
-									if(revisionDate <= $scope.commitDate &&
-										revisionDate >= $scope.previousCommitDate){
-											hostID = revisions[i]["host_id"];
+									if(revisionDate <= currentCommit.timestamp &&
+										revisionDate >= currentCommit.previousCommitDate){
+											currentCommit.hostID = revisions[i]["host_id"];
 											break;
 										}										
 								}								
@@ -181,17 +188,15 @@ angular.module('sv')
 								hostId = "Unable to retrieve revision history for commit";
 							}
 							
-							$timeout(function(){
-								$scope.user.currentCommits.push({
-								'timestamp': $scope.commitDate, 
-								'hostId':  hostID,
-								'commit': $scope.commit.sha});
-							});
+							//$timeout(function(){
+								
+							//});
 							
 						});
 					}
 					});
-				}
+					
+				});
 			}	
 		});
     }
