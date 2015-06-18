@@ -62,7 +62,7 @@ angular.module('sv')
                 }).
                 error(function (data, status, headers, config) {
                     deferred.resolve({'error': 'Could not make request'});
-                });
+                });  
             return deferred.promise;
         };
 		
@@ -104,7 +104,7 @@ angular.module('sv')
 		if(authError || !$scope.dbClient.isAuthenticated()){
 			alert("Cannot login to Dropbox!");
 		}});
-	}
+	}     
 	
 	$scope.usernameChange = function(){		
 		$scope.user.branches = [];
