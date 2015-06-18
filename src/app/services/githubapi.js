@@ -32,7 +32,7 @@
         var getCommits = function(username, reponame, branchname)
         {
             var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author=combiths&sha='+branchname+ '&client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author='+username+'&sha='+branchname+ '&client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
                 success(function (data, status, headers, config) {
                     deferred.resolve(data);
                 }).
