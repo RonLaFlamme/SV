@@ -151,19 +151,16 @@ angular.module('sv')
 					var commitDate = commit.commit.committer.date;
 					var previousCommitDate = i + 1 < data.length ? 
 										data[i+1].commit.committer.date : null;
-					
-					$scope.user.currentCommits.push({
-							'timestamp': commitDate, 
-							'hostId':  "Not found",
-							'commit':  commit.sha,
-							'previousCommitDate': previousCommitDate});
-					
+					$timeout(function(){
+						$scope.user.currentCommits.push({
+								'timestamp': commitDate, 
+								'hostId':  "Not found",
+								'commit':  commit.sha,
+								'previousCommitDate': previousCommitDate});
+					});
 				}
 				
-				//angular.forEach($scope.user.currentCommits, function(currentCommit){
-				for(var i = 0; i < $scope.user.currentCommits.length; i++){
-					var currentCommit = $scope.user.currentCommits[i];
-					$scope.currentIndex = i;
+				angular.forEach($scope.user.currentCommits, function(currentCommit){
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
 										 currentCommit.commit).then(function(commitInfo){
 											
@@ -176,7 +173,7 @@ angular.module('sv')
 						
 						$scope.dbClient.history(filename, function(error, revisions){
 							var hostID;
-							if(error){								
+							if(error){  
 								currentCommit.hostID = error.responseText;
 							}
 							else if(revisions && revisions.length > 0){			
@@ -184,21 +181,19 @@ angular.module('sv')
 									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
-											currentCommit.hostID = revisions[i]["host_id"];												
+											currentCommit.hostID = revisions[i]["host_id"];
 											break;
 										}										
 								}								
 							}
 							else{
-								currentCommit.hostId = "Unable to retrieve revision history for commit";
+								hostId = "Unable to retrieve revision history for commit";
 							}
-							$scope.user.currentCommits
-											.splice($scope.currentIndex, 1, currentCommit);
 						});
 					}
 					});
 					
-				}
+				});
 			}	
 		});
     }
