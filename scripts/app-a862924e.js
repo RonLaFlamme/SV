@@ -163,9 +163,11 @@ angular.module('sv')
 					
 				}
 				
-				angular.forEach($scope.user.currentCommits, function(currentCommit){
+				//angular.forEach($scope.user.currentCommits, function(currentCommit){
+				for(var i = 0; i < $scope.user.currentCommits.length; i++){
+					$scope.currentIndex = i;
 					GithubAPI.getCommit($scope.user.username, $scope.user.currentRepo,
-										 currentCommit.commit).then(function(commitInfo){
+					$scope.user.currentCommits[i].commit).then(function(commitInfo){
 											
 											
 					if(commitInfo.hasOwnProperty("files") &&
@@ -175,6 +177,7 @@ angular.module('sv')
 						var filename = $scope.user.currentRepo + '/' + commitInfo.files[0].filename;
 						
 						$scope.dbClient.history(filename, function(error, revisions){
+							var currentCommit = $scope.user.currentCommits[$scope.currentIndex];
 							if(error){  
 								currentCommit.hostID = error.responseText;
 							}
@@ -184,7 +187,7 @@ angular.module('sv')
 									var revisionDate = revisions[i].modifiedAt;
 									if(revisionDate <= new Date(currentCommit.timestamp) &&
 										revisionDate >= new Date(currentCommit.previousCommitDate)){
-										currentCommit.hostId = revisions[i]["host_id"];
+										currentCommit.hostId = revisions[i]["host_id"];										
 										break;
 									}										
 								}								
@@ -193,12 +196,17 @@ angular.module('sv')
 								currentCommit.hostId = "Not available";
 							}
 							
+							$scope.user.currentCommits.splice($scope.currentIndex, 1, currentCommit);
 							delete currentCommit.previousCommitDate;
 						});
 					}
 					});
-				});
+				}//);
 			}	
+			else{
+				alert("Please refresh page to login to Dropbox");
+			}
+			
 		});
     }
 		
