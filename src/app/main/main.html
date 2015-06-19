@@ -1,6 +1,6 @@
 <div class="container">
 
-  <div ng-include="'app/components/navbar/navbar.html'"></div>
+  <!--div ng-include="'app/components/navbar/navbar.html'"></div -->
   <div class="jumbotron text-center">
     <h1>LaFlamme's Github</h1>
     <p class="lead">
@@ -10,6 +10,7 @@
     <input type="button" ng-click="usernameChange()" value="Fetch Repos"/>
     <select ng-change="repoChanged()" ng-model="user.currentRepo" ng-options="o as o for o in user.repos"></select>
     <select ng-model="user.currentBranch" ng-options="o as o for o in user.branches"></select>
+	<div id="dropboxDiv"><p><a href="https://www.dropbox.com/downloading"><img src="assets\images\Dropbox.png"/><br/>(Download)</p></a></div>
   </div>  
 
   <div class="row">
