@@ -214,32 +214,37 @@ angular.module('sv')
 		
 	$scope.saveToDropboxClick = function(){
 		
-		if(!$scope.dbClient){
-			$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
-		}
+		if($scope.user.currentBranch){
+			if(!$scope.dbClient){
+				$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
+			}
+				
+			if(!$scope.dbClient.isAuthenticated()){
+				$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+				$scope.dbClient.authenticate(function(authError){
+				if(authError || !$scope.dbClient.isAuthenticated()){
+					alert("Cannot login to Dropbox!");
+				}});
+			}
 			
-		if(!$scope.dbClient.isAuthenticated()){
-			$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
-			$scope.dbClient.authenticate(function(authError){
-			if(authError || !$scope.dbClient.isAuthenticated()){
-				alert("Cannot login to Dropbox!");
-			}});
+			if($scope.dbClient.isAuthenticated()){
+				var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
+				var foldername = $scope.user.currentRepo + "_log/";
+				filename = filename.replace(/:/g, "_").replace(/Z/g, "");
+				$scope.dbClient.writeFile(foldername + filename, 
+					JSON.stringify($scope.user.currentCommits), 
+					function(error, stat) {
+					if (error) {
+						alert(error);
+					}
+					else{ 
+						alert("File saved to " + foldername.replace("/", "") + " in Dropbox.");
+					}
+				});
+			}
 		}
-		
-		if($scope.dbClient.isAuthenticated()){
-			var filename = $scope.dbFilename ? $scope.dbFilename : Date() + ".log";
-			var foldername = $scope.user.currentRepo + "_log/";
-			filename = filename.replace(/:/g, "_").replace(/Z/g, "");
-			$scope.dbClient.writeFile(foldername + filename, 
-				JSON.stringify($scope.user.currentCommits), 
-				function(error, stat) {
-				if (error) {
-					alert(error);
-				}
-				else{ 
-					alert("File saved to " + foldername.replace("/", "") + " in Dropbox.");
-				}
-			});
+		else{
+			alert("Please select a branch to save.");
 		}
 	};
   }]);
