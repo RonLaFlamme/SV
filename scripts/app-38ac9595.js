@@ -12,8 +12,17 @@ angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngReso
     //DropboxProvider.config('4nl4o8v9y9wqv1i', 'https://ermaxw.github.io/components/ngDropbox/callback.html');
         
     $urlRouterProvider.otherwise('/');
-  }])
-;
+  }]);
+  
+var loginClicked = function(){
+	if(!$scope.dbClient.isAuthenticated()){
+		$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+		$scope.dbClient.authenticate(function(authError){
+		if(authError || !$scope.dbClient.isAuthenticated()){
+			alert("Cannot login to Dropbox!");
+		}});
+	}     
+};
 
 'use strict';
 
@@ -97,14 +106,6 @@ angular.module('sv')
 	if(!$scope.dbClient){
 		$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
 	}
-	
-	if(!$scope.dbClient.isAuthenticated()){
-		$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
-		$scope.dbClient.authenticate(function(authError){
-		if(authError || !$scope.dbClient.isAuthenticated()){
-			alert("Cannot login to Dropbox!");
-		}});
-	}     
 	
 	$scope.usernameChange = function(){		
 		$scope.user.branches = [];
@@ -249,5 +250,5 @@ angular.module('sv')
 	};
   }]);
 
-angular.module("sv").run(["$templateCache", function($templateCache) {$templateCache.put("app/main/main.html","<div class=\"container\"><div class=\"jumbotron text-center\"><h1>LaFlamme\'s Github</h1><p class=\"lead\">Commit Audit Log</p><input type=\"text\" ng-model=\"user.username\" placeholder=\"user name\"> <input type=\"button\" ng-click=\"usernameChange()\" value=\"Fetch Repos\"><select ng-change=\"repoChanged()\" ng-model=\"user.currentRepo\" ng-options=\"o as o for o in user.repos\"></select><select ng-model=\"user.currentBranch\" ng-options=\"o as o for o in user.branches\"></select><div id=\"dropboxDiv\"><p><a href=\"https://www.dropbox.com/downloading\"><img src=\"assets\\images\\Dropbox.png\"><br>(Download)</a></p></div></div><div class=\"row\"><table class=\"table table-condensed table-striped table-condensed\"><thead><tr><th>Time Stamp</th><th>Host ID</th><th>Commit</th></tr></thead><tbody><tr ng-repeat=\"commit in user.currentCommits track by $index\"><td>{{commit.timestamp | date:\'yyyy-MM-dd HH:mm:ss Z\'}}</td><td>{{commit.hostId}}</td><td>{{commit.commit}}</td></tr></tbody></table></div><div><input type=\"button\" ng-click=\"saveToDropboxClick()\" value=\"Save to Dropbox\"></div></div>");
+angular.module("sv").run(["$templateCache", function($templateCache) {$templateCache.put("app/main/main.html","<div class=\"container\"><div class=\"pyc-section-two-content\"><div class=\"pyc-header-two\">2 Easy Steps</div><div class=\"steps-container\"><div class=\"steps-left\"><img src=\"images/icon-dropbox.jpg\"><br>1. Move your repo into your Dropbox root folder to get an independent stamp of all code change</div><div class=\"steps-right\"><div><a href=\"#\" onclick=\"loginClicked();\" class=\"btn-white\">Click here to link<br>Dropbox account</a></div><p class=\"fine-print\">*Requires desktop Dropbox client to be installed</p></div><div class=\"clear-fix\"></div></div><div class=\"steps-container-bottom\"><div class=\"steps-left\"><img src=\"images/icon-github.jpg\"><br>2. Publish to Github and view your</div><div class=\"steps-right\"><div class=\"form-list\"><ul><li>Enter Github ID</li><li><input type=\"text\" ng-model=\"user.username\" placeholder=\"user name\"></li><li><input type=\"button\" ng-click=\"usernameChange()\" value=\"Fetch Repos\"></li></ul><ul><li>Select Repo</li><li><select ng-change=\"repoChanged()\" ng-model=\"user.currentRepo\" ng-options=\"o as o for o in user.repos\"></select></li></ul><ul><li>Select Branch</li><li><select ng-model=\"user.currentBranch\" ng-options=\"o as o for o in user.branches\"></select></li></ul></div></div><div class=\"clear-fix\"></div></div></div><div class=\"pyc-section-three\"><div class=\"pyc-header-three\">Report Results</div><table class=\"report-results\"><tr class=\"table-header\"><td class=\"report-titles\"><img src=\"images/icon-clock.jpg\"><br>Time</td><td class=\"report-titles\"><img src=\"images/icon-computer.jpg\"><br>Computer<br><span class=\"fine-print\">Dropbox Signature</span></td><td class=\"report-titles\"><img src=\"images/icon-closingtag.jpg\"><br>Github Commit</td></tr><tr ng-repeat=\"commit in user.currentCommits track by $index\"><td>{{commit.timestamp | date:\'yyyy-MM-dd HH:mm:ss Z\'}}</td><td>{{commit.hostId}}</td><td>{{commit.commit}}</td></tr></table><div class=\"report-options\"><ul><li><a href=\"#\" ng-click=\"saveToDropboxClick()\" class=\"btn-black\">Save to Dropbox</a></li><li><a href=\"#\"><img src=\"images/arrow-left.jpg\"></a></li><li>Pagination</li><li><a href=\"#\"><img src=\"images/arrow-right.jpg\"></a></li></ul></div></div></div>");
 $templateCache.put("app/components/navbar/navbar.html","<nav class=\"navbar navbar-static-top navbar-inverse\" ng-controller=\"NavbarCtrl\"><div class=\"container-fluid\"><div class=\"navbar-header\"><a class=\"navbar-brand\" href=\"/\"><span class=\"glyphicon glyphicon-home\"></span> SV</a></div><div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-6\"><ul class=\"nav navbar-nav\"><li class=\"active\"><a ng-href=\"#\">Home</a></li><li><a ng-href=\"#\">About</a></li><li><a ng-href=\"#\">Contact</a></li></ul><ul class=\"nav navbar-nav navbar-right\"><li>Current date: {{ date | date:\'yyyy-MM-dd\' }}</li></ul></div></div></nav>");}]);
