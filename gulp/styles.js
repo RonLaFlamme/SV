@@ -39,9 +39,9 @@ module.exports = function(options) {
       .pipe(indexFilter)
       .pipe($.inject(injectFiles, injectOptions))
       .pipe(indexFilter.restore())
-      .pipe(vendorFilter)
+      /*.pipe(vendorFilter)
       .pipe(wiredep(options.wiredep))
-      .pipe(vendorFilter.restore())
+      .pipe(vendorFilter.restore())*/
       .pipe($.sourcemaps.init())
       .pipe($.sass(sassOptions)).on('error', options.errorHandler('Sass'))
       .pipe($.autoprefixer()).on('error', options.errorHandler('Autoprefixer'))

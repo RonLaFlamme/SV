@@ -10,14 +10,6 @@ angular.module('sv')
 		$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
 	}
 	
-	if(!$scope.dbClient.isAuthenticated()){
-		$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
-		$scope.dbClient.authenticate(function(authError){
-		if(authError || !$scope.dbClient.isAuthenticated()){
-			alert("Cannot login to Dropbox!");
-		}});
-	}     
-	
 	$scope.usernameChange = function(){		
 		$scope.user.branches = [];
 		$scope.user.repos = [];
