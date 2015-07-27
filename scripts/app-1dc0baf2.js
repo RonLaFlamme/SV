@@ -27,6 +27,70 @@ angular.module('sv')
     $scope.date = new Date();
   }]);
 
+(function (){
+    angular.module('sv').factory('GithubAPI', GithubAPI);
+    GithubAPI.$inject = ['$http', '$q'];
+    function GithubAPI($http, $q){
+        var baseURL = 'https://api.github.com';
+        var getRepos = function(username)
+        {
+            var deferred = $q.defer();
+            $http.get(baseURL+'/users/'+username+'/repos?client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
+                success(function (data, status, headers, config) {
+                    deferred.resolve(data);
+                }).
+                error(function (data, status, headers, config) {
+                    deferred.resolve({'error': 'Could not make request'});
+                });
+            return deferred.promise;
+        };
+
+        var getBranches = function(username, reponame)
+        {
+            var deferred = $q.defer();
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/branches?client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
+                success(function (data, status, headers, config) {
+                    deferred.resolve(data);
+                }).
+                error(function (data, status, headers, config) {
+                    deferred.resolve({'error': 'Could not make request'});
+                });
+            return deferred.promise;
+        };
+
+        var getCommits = function(username, reponame, branchname)
+        {
+            var deferred = $q.defer();
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author='+username+'&sha='+branchname+ '&client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
+                success(function (data, status, headers, config) {
+                    deferred.resolve(data);
+                }).
+                error(function (data, status, headers, config) {
+                    deferred.resolve({'error': 'Could not make request'});
+                });  
+            return deferred.promise;
+        };
+		
+		var getCommit = function(username, reponame, commitId){
+			var deferred = $q.defer();
+            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits/'+commitId+'?client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
+                success(function (data, status, headers, config) {
+                    deferred.resolve(data);
+                }).
+                error(function (data, status, headers, config) {
+                    deferred.resolve({'error': 'Could not make request'});
+                });
+            return deferred.promise;
+		};
+        
+        return {
+            getRepos: getRepos,
+            getBranches: getBranches,
+            getCommits: getCommits,
+            getCommit: getCommit
+        };
+    }
+})();
 'use strict';
 
 angular.module('sv')
@@ -36,7 +100,8 @@ angular.module('sv')
     $scope.currentPage = 0;
     $scope.pageSize = 10;
 	$scope.numberOfPages=function(){
-		if($scope.user.initialCommits){
+		if($scope.user.initialCommits &&
+			$scope.user.initialCommits.length > 0){
 			return Math.ceil($scope.user.initialCommits.length/$scope.pageSize);
 		}
 		else{
@@ -61,10 +126,15 @@ angular.module('sv')
 		$scope.user.currentCommits = [];
 		
         GithubAPI.getRepos($scope.user.username).then(function(data){
-            $scope.user.repos = [];
-            angular.forEach(data, function(repo){
-                $scope.user.repos.push(repo.full_name.split("/").pop());
-            });
+			if(data.error){
+				alert(data.error);
+			}
+			else{
+				$scope.user.repos = [];
+				angular.forEach(data, function(repo){
+					$scope.user.repos.push(repo.full_name.split("/").pop());
+				});
+			}
         });
 		return false;
     }
@@ -210,69 +280,5 @@ angular.module('sv')
 	};
   }]);
 
-(function (){
-    angular.module('sv').factory('GithubAPI', GithubAPI);
-    GithubAPI.$inject = ['$http', '$q'];
-    function GithubAPI($http, $q){
-        var baseURL = 'https://api.github.com';
-        var getRepos = function(username)
-        {
-            var deferred = $q.defer();
-            $http.get(baseURL+'/users/'+username+'/repos?client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
-                success(function (data, status, headers, config) {
-                    deferred.resolve(data);
-                }).
-                error(function (data, status, headers, config) {
-                    deferred.resolve({'error': 'Could not make request'});
-                });
-            return deferred.promise;
-        };
-
-        var getBranches = function(username, reponame)
-        {
-            var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/branches?client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
-                success(function (data, status, headers, config) {
-                    deferred.resolve(data);
-                }).
-                error(function (data, status, headers, config) {
-                    deferred.resolve({'error': 'Could not make request'});
-                });
-            return deferred.promise;
-        };
-
-        var getCommits = function(username, reponame, branchname)
-        {
-            var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits?author='+username+'&sha='+branchname+ '&client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
-                success(function (data, status, headers, config) {
-                    deferred.resolve(data);
-                }).
-                error(function (data, status, headers, config) {
-                    deferred.resolve({'error': 'Could not make request'});
-                });  
-            return deferred.promise;
-        };
-		
-		var getCommit = function(username, reponame, commitId){
-			var deferred = $q.defer();
-            $http.get(baseURL+'/repos/'+username+'/'+reponame+'/commits/'+commitId+'?client_id=806e681c8e84253e21ee&client_secret=8683fce7615e8304aba4fdb9b0659832659d1cbe').
-                success(function (data, status, headers, config) {
-                    deferred.resolve(data);
-                }).
-                error(function (data, status, headers, config) {
-                    deferred.resolve({'error': 'Could not make request'});
-                });
-            return deferred.promise;
-		};
-        
-        return {
-            getRepos: getRepos,
-            getBranches: getBranches,
-            getCommits: getCommits,
-            getCommit: getCommit
-        };
-    }
-})();
 angular.module("sv").run(["$templateCache", function($templateCache) {$templateCache.put("app/main/main.html","<div class=\"container\"><div class=\"pyc-section-two\"><div class=\"pyc-section-two-content\"><div class=\"pyc-header-two\">2 Easy Steps</div><div class=\"steps-container\"><div class=\"steps-left\"><img src=\"images/icon-dropbox.jpg\"><br>1. Move your repo into your Dropbox root folder to get an independent stamp of all code change</div><div class=\"steps-right\"><div><a href=\"#\" ng-click=\"loginClicked();\" id=\"loginDropbox\" class=\"btn-white\">Click here to link<br>Dropbox account</a></div><p class=\"fine-print\">*Requires desktop <a href=\"https://www.dropbox.com/downloading\" target=\"_blank\">Dropbox client</a> to be installed</p></div><div class=\"clear-fix\"></div></div><div class=\"steps-container-bottom\"><div class=\"steps-left\"><img src=\"images/icon-github.jpg\"><br>2. Publish to GitHub and view your</div><div class=\"steps-right\"><div class=\"form-list\"><ul><li>Enter GitHub ID</li><li><input type=\"text\" ng-model=\"user.username\" placeholder=\"user name\"></li><li><a href=\"#\" class=\"btn-white\" ng-click=\"usernameChange()\">Fetch Repos<a></a></a></li></ul><ul><li>Select Repo</li><li><select ng-change=\"repoChanged()\" ng-model=\"user.currentRepo\" ng-options=\"o as o for o in user.repos\"></select></li></ul><ul><li>Select Branch</li><li><select ng-model=\"user.currentBranch\" ng-options=\"o as o for o in user.branches\"></select></li></ul></div></div><div class=\"clear-fix\"></div></div></div></div><div class=\"pyc-section-three\"><div class=\"pyc-header-three\">Report Results</div><table class=\"report-results\"><tr class=\"table-header\"><td class=\"report-titles\"><img src=\"images/icon-clock.jpg\"><br>Time</td><td class=\"report-titles\"><img src=\"images/icon-computer.jpg\"><br>Computer<br><span class=\"fine-print\">Dropbox Signature</span></td><td class=\"report-titles\"><img src=\"images/icon-closingtag.jpg\"><br>GitHub Commit</td></tr><tr ng-repeat=\"commit in user.currentCommits | startFrom:currentPage*pageSize | limitTo:pageSize\"><td>{{commit.timestamp | date:\'yyyy-MM-dd HH:mm:ss Z\'}}</td><td>{{commit.hostId}}</td><td>{{commit.commit}}</td></tr></table><div class=\"report-options\"><ul><li><a href=\"#\" ng-click=\"saveToDropboxClick()\" class=\"btn-black\">Save to Dropbox</a></li><li><a href=\"#\" ng-disabled=\"currentPage == 0\" ng-click=\"currentPage=currentPage-1\"><img src=\"images/arrow-left.jpg\"></a></li><li>Pagination {{currentPage+1}}/{{numberOfPages()}}</li><li><a href=\"#\" ng-disabled=\"currentPage >= user.currentCommits.length/pageSize - 1\" ng-click=\"currentPage=currentPage+1\"><img src=\"images/arrow-right.jpg\"></a></li></ul></div></div></div>");
 $templateCache.put("app/components/navbar/navbar.html","<nav class=\"navbar navbar-static-top navbar-inverse\" ng-controller=\"NavbarCtrl\"><div class=\"container-fluid\"><div class=\"navbar-header\"><a class=\"navbar-brand\" href=\"/\"><span class=\"glyphicon glyphicon-home\"></span> SV</a></div><div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-6\"><ul class=\"nav navbar-nav\"><li class=\"active\"><a ng-href=\"#\">Home</a></li><li><a ng-href=\"#\">About</a></li><li><a ng-href=\"#\">Contact</a></li></ul><ul class=\"nav navbar-nav navbar-right\"><li>Current date: {{ date | date:\'yyyy-MM-dd\' }}</li></ul></div></div></nav>");}]);
