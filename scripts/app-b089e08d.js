@@ -16,12 +16,7 @@ angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngReso
   .filter('startFrom', function() {
     return function(input, start) {
         start = +start;
-		if(Array.isArray(input)){
-			return input.slice(start);
-		}
-		else{
-			return [];
-		}
+		return input.slice(start);		
     };
   });
 
@@ -105,8 +100,8 @@ angular.module('sv')
     $scope.currentPage = 0;
     $scope.pageSize = 10;
 	$scope.numberOfPages=function(){
-		if($scope.user.commits){
-			return Math.ceil($scope.user.commits.length/$scope.pageSize);
+		if($scope.user.initialCommits){
+			return Math.ceil($scope.user.initialCommits.length/$scope.pageSize);
 		}
 		else{
 			return 1;
@@ -119,7 +114,7 @@ angular.module('sv')
 	}
 	
 	if($scope.dbClient.isAuthenticated()){
-		angular.element("#loginDropbox").text("Dropbox account linked!");	
+		angular.element("#loginDropbox").text("Dropbox Account Linked!");	
 	}
 	
 	$scope.usernameChange = function(){		
@@ -239,11 +234,9 @@ angular.module('sv')
 		}
 		
 		if($scope.dbClient.isAuthenticated()){
-			alert("You're logged in to Dropbox!");
-			angular.element("#loginDropbox").text("Dropbox account linked!");
+			angular.element("#loginDropbox").text("Dropbox Account Linked!");
 		}
-		
-		return false;
+		return false;		
 	};
 	
 	$scope.saveToDropboxClick = function(){
