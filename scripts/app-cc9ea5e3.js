@@ -1,8 +1,7 @@
 'use strict';
 
-var svApp = angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ui.router', 'ui.bootstrap']);
-
-svApp.config(["$stateProvider", "$urlRouterProvider", function ($stateProvider, $urlRouterProvider) {
+angular.module('sv', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'ngResource', 'ui.router', 'ui.bootstrap'])
+	.config(["$stateProvider", "$urlRouterProvider", function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('home', {
         url: '/',
@@ -15,13 +14,13 @@ svApp.config(["$stateProvider", "$urlRouterProvider", function ($stateProvider, 
     $urlRouterProvider.otherwise('/');
   }]);
 
-svApp.filter('startFrom', function() {
+/*svApp.filter('startFrom', function() {
     return function(input, start) {
         start = +start;
         return input.slice(start);
     };
 });
-  
+  */
 var loginClicked = function(){
 	if(!$scope.dbClient.isAuthenticated()){
 		$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
