@@ -105,8 +105,12 @@ angular.module('sv')
     $scope.currentPage = 0;
     $scope.pageSize = 10;
 	$scope.numberOfPages=function(){
-        var pages = Math.ceil($scope.user.commits.length/$scope.pageSize);
-		return pages == 0 ? 1 : pages;
+		if($scope.user.commits){
+			return Math.ceil($scope.user.commits.length/$scope.pageSize);
+		}
+		else{
+			return 1;
+		}
     }
 	
 	//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
