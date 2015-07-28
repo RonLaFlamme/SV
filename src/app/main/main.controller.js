@@ -4,10 +4,25 @@ angular.module('sv')
   .controller('MainCtrl', function ($scope, $timeout, GithubAPI) {
 	
     $scope.user = {'username': '', 'repos':[], 'branches':[], 'currentRepo':'', 'currentBranch': '', 'currentCommits':[]}
-    
+    $scope.currentPage = 0;
+    $scope.pageSize = 10;
+	$scope.numberOfPages=function(){
+		if($scope.user.initialCommits &&
+			$scope.user.initialCommits.length > 0){
+			return Math.ceil($scope.user.initialCommits.length/$scope.pageSize);
+		}
+		else{
+			return 1;
+		}
+    }
+	
 	//var dbClient = new Dropbox.Client({ key: 'ul8h8jpx9o164n1'});
 	if(!$scope.dbClient){
 		$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
+	}
+	
+	if($scope.dbClient.isAuthenticated()){
+		angular.element("#loginDropbox").text("Dropbox Account Linked!");	
 	}
 	
 	$scope.usernameChange = function(){		
@@ -18,11 +33,17 @@ angular.module('sv')
 		$scope.user.currentCommits = [];
 		
         GithubAPI.getRepos($scope.user.username).then(function(data){
-            $scope.user.repos = [];
-            angular.forEach(data, function(repo){
-                $scope.user.repos.push(repo.full_name.split("/").pop());
-            });
+			if(data.error){
+				alert(data.error);
+			}
+			else{
+				$scope.user.repos = [];
+				angular.forEach(data, function(repo){
+					$scope.user.repos.push(repo.full_name.split("/").pop());
+				});
+			}
         });
+		return false;
     }
     
     $scope.repoChanged = function(){
@@ -37,6 +58,7 @@ angular.module('sv')
 			$scope.user.currentBranch = 'master';
         });
     }
+	
 	$scope.$watch("user.currentBranch", function(newVal){
 		if (newVal){
 			branchChanged();
@@ -110,18 +132,29 @@ angular.module('sv')
 				});
 			}	
 			else{
-				alert("Please refresh page to login to Dropbox");
+				alert("Please first link to Dropbox");
 			}
 			
 		});
     }
+	
+	$scope.loginClicked = function(){
+		if(!$scope.dbClient.isAuthenticated()){
+			$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));
+			$scope.dbClient.authenticate(function(authError){
+			if(authError || !$scope.dbClient.isAuthenticated()){
+				alert("Cannot login to Dropbox!");
+			}});
+		}
 		
+		if($scope.dbClient.isAuthenticated()){
+			angular.element("#loginDropbox").text("Dropbox Account Linked!");
+		}		
+	};
+	
 	$scope.saveToDropboxClick = function(){
 		
-		if($scope.user.currentBranch){
-			if(!$scope.dbClient){
-				$scope.dbClient = new Dropbox.Client({ key: '4nl4o8v9y9wqv1i' });
-			}
+		if($scope.user.currentBranch){			
 				
 			if(!$scope.dbClient.isAuthenticated()){
 				$scope.dbClient.authDriver(new Dropbox.AuthDriver.Popup({ receiverUrl:  'https://ronlaflamme.github.io/sv/oauth_receiver.html' }));

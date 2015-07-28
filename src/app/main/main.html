@@ -9,22 +9,22 @@
 				1. Move your repo into your Dropbox root folder to get an independent stamp of all code change
 			</div>
 			<div class="steps-right">
-				<div><a href="#" onclick="loginClicked();" class="btn-white">Click here to link<br/>Dropbox account</a></div>
-				<p class="fine-print">*Requires desktop Dropbox client to be installed</p>
+				<div><a href="#" ng-click="loginClicked();" onclick="return false;" id="loginDropbox" class="btn-white">Click here to link<br/>Dropbox account</a></div>
+				<p class="fine-print">*Requires desktop <a href="https://www.dropbox.com/downloading" target="_blank">Dropbox client</a> to be installed</p>
 			</div>
 			<div class="clear-fix"></div>
 		</div>
 		<div class="steps-container-bottom">
 			<div class="steps-left">
 				<img src="images/icon-github.jpg" /><br/>
-				2. Publish to Github and view your
+				2. Publish to GitHub and view your
 			</div>
 			<div class="steps-right">
 				<div class="form-list">
 					<ul>
-						<li>Enter Github ID</li>
-						<li><input type="text" ng-model="user.username" placeholder="user name"></input></li>
-						<li><input type="button" ng-click="usernameChange()" value="Fetch Repos"/></li>
+						<li>Enter GitHub ID</li>
+						<li><input type="text" id="gitUser" ng-model="user.username" placeholder="user name"></input></li>
+						<li><a href="#" class="btn-white" ng-click="usernameChange()">Fetch Repos<a/></li>
 					</ul>
 					<ul>
 						<li>Select Repo</li>
@@ -53,9 +53,9 @@
 		<tr class="table-header">
 			<td class="report-titles"><img src="images/icon-clock.jpg" /><br/>Time</td>
 			<td class="report-titles"><img src="images/icon-computer.jpg" /><br/>Computer<br/><span class="fine-print">Dropbox Signature</span></td>
-			<td class="report-titles"><img src="images/icon-closingtag.jpg" /><br/>Github Commit</td>
+			<td class="report-titles"><img src="images/icon-closingtag.jpg" /><br/>GitHub Commit</td>
 		</tr>
-		<tr ng-repeat="commit in user.currentCommits track by $index">
+		<tr ng-repeat="commit in user.currentCommits | startFrom:currentPage*pageSize | limitTo:pageSize">
 		  <td>{{commit.timestamp | date:'yyyy-MM-dd HH:mm:ss Z'}}</td>
 		  <td>{{commit.hostId}}</td>
 		  <td>{{commit.commit}}</td>
@@ -65,9 +65,9 @@
 	<div class="report-options">
 		<ul>
 			<li><a href="#" ng-click="saveToDropboxClick()" class="btn-black">Save to Dropbox</a></li>
-			<li><a href="#"><img src="images/arrow-left.jpg" /></a></li>
-			<li>Pagination</li>
-			<li><a href="#"><img src="images/arrow-right.jpg" /></a></li>
+			<li><a href="#" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1"><img src="images/arrow-left.jpg" /></a></li>
+			<li>Pagination {{currentPage+1}}/{{numberOfPages()}}</li>
+			<li><a href="#" ng-disabled="currentPage >= user.currentCommits.length/pageSize - 1" ng-click="currentPage=currentPage+1"><img src="images/arrow-right.jpg" /></a></li>
 		</ul>
 	</div>
 
